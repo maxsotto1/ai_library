@@ -3,7 +3,7 @@ from sklearn.metrics import mean_squared_error
 from preprocess.sliding_window import apply_sliding_window
 import numpy as np
 import xgboost as xgb
-
+from helpers.to_saved_files import atomic_save
 class XGBoost_pipeline:
         def __init__(self):
             self.scaler_y = None
@@ -100,6 +100,11 @@ class XGBoost_pipeline:
             targets = self.scaler_y.inverse_transform((y_test))
             rmse_val = sqrt(mean_squared_error(preds, targets))
             self.model = model
+            atomic_save(self.model, "trained_model.pkl")
+            atomic_save(self.scaler_x, "scaler_x.pkl")
+            atomic_save(self.scaler_y, "scaler_y.pkl")
+            atomic_save(self.clipping_min, "clipping_min.pkl")
+            atomic_save(self.clipping_max, "clipping_max.pkl")
             return model, rmse_val
     
 
@@ -114,7 +119,7 @@ class XGBoost_pipeline:
             # 2. scale features ONLY
             feature_df = df_full.drop(columns=target_cols)
             X_feat = self.scaler_x.transform(feature_df)
-
+            X_feat = np.clip(X_feat, self.clipping_min, self.clipping_max).astype(np.float32)
             # 3. scale targets separately
             Y = self.scaler_y.transform(df_full[target_cols])
 

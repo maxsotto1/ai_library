@@ -1,6 +1,6 @@
 import pandas as pd
-from gmlp_class import gMLP_pipeline
-from xgb_class import xgb_pipeline
+from models.gmlp_class import gMLP_pipeline
+from models.xgb_class import xgb_pipeline
 import sys
 from pathlib import Path
 import yaml
@@ -19,14 +19,18 @@ splits = config["splits"]
 cols_to_drop = config["cols_to_drop"]
 stride = config["stride"]
 
-def get_last_window_data(train_window, train_horizon, targets, pipeline_type, splits, cols_to_drop):
+def get_last_window_data_and_train(train_window, train_horizon, targets, pipeline_type, splits, cols_to_drop):
     if pipeline_type == "gmlp":
         pipeline = gMLP_pipeline()
     elif pipeline_type == "xgb":
         pipeline = xgb_pipeline()
     df = pd.read_parquet("all_data.parquet")
     if pipeline_type == "gmlp":
-        dls, test_dl = pipeline.preprocess_splits(df, targets, splits=splits, n_future=train_horizon, n_past=train_window, stride=stride, cols_to_drop=cols_to_drop)
+        dls, test_dl = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
+        model, rmse = pipeline.train(dls, test_dl)
     elif pipeline_type == "xgb":
-        train_ds, val_ds, test_ds = pipeline.preprocess_splits(df, targets, n_future=train_horizon, n_past=train_window)
-    return (dls, test_dl) if pipeline_type == "gmlp" else (train_ds, val_ds, test_ds)
+        train_ds, val_ds, test_ds = pipeline.preprocess_splits(df,targets, splits, train_horizon, train_window, stride, cols_to_drop)
+        model, rmse = pipeline.train(train_ds, val_ds, test_ds)
+    print(f"Trained {pipeline_type} model with RMSE: {rmse}")
+
+get_last_window_data_and_train(train_window, train_horizon, targets, pipeline_type, splits, cols_to_drop)

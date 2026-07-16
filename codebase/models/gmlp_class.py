@@ -11,6 +11,7 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 import pandas as pd
+from helpers.to_saved_files import atomic_save
 
 class gMLP_pipeline:
         def __init__(self):
@@ -112,7 +113,13 @@ class gMLP_pipeline:
             plt.tight_layout()
             plt.show()
             '''
+
             self.model = model
+            atomic_save(self.scaler_x, "scaler_x.pkl")  
+            atomic_save(self.scaler_y, "scaler_y.pkl")
+            atomic_save(self.model, "trained_model.pth", use_pytorch=True)
+            atomic_save(self.clipping_min, "clipping_min.pkl")
+            atomic_save(self.clipping_max, "clipping_max.pkl")
             return model, rmse_val
         
         def preprocess_inference(self, df, targets, n_past, exclude_columns=None):
@@ -126,6 +133,7 @@ class gMLP_pipeline:
             # 2. scale features ONLY
             feature_df = df_full.drop(columns=target_cols)
             X_feat = self.scaler_x.transform(feature_df)
+            X_feat = np.clip(X_feat, self.clipping_min, self.clipping_max).astype(np.float32)
 
             # 3. scale targets separately
             Y = self.scaler_y.transform(df_full[target_cols])
