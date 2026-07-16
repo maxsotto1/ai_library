@@ -1,0 +1,17 @@
+# Application Configuration
+pipeline_type: "gMLP"
+window: 96
+horizon: 96
+stride: 1
+prediction_target: "cpu_util_instance"
+STANDARD_METRICS:
+  - "cpu_util_instance"
+  - "mean_cpu_util_prct"
+  - "cpu_slo_upper"
+  - "cpu_slo_lower"
+cols_to_drop:
+  - "timestamp"
+  - "cpu_slo_upper"
+  - "cpu_slo_lower"
+splits:
+  [0.7, 0.1, 0.2]
