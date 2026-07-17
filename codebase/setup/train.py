@@ -1,13 +1,11 @@
 import pandas as pd
-from models.gmlp_class import gMLP_pipeline
-from models.xgb_class import XGBoost_pipeline
+from codebase.models.gmlp_class import gMLP_pipeline
+from codebase.models.xgb_class import XGBoost_pipeline
 import sys
 from pathlib import Path
 import yaml
-import read
+import codebase.setup.read
 
-parent_dir = Path(__file__).resolve().parent.parent
-sys.path.append(str(parent_dir))
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 #get train window, train_horizon, targets, pipeline_type from config.yaml

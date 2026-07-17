@@ -46,4 +46,4 @@ series = (
 print("\nResampled (300s) preview:\n", series)
 print("Metrics actually found in the dataset:", df["metric"].unique())
 # 5. Save the full dataframe to a Parquet file without the row index numbers
-df.to_parquet("cleaned_cpu_util.parquet", index=False)
+df.to_parquet("data/data.parquet", index=False)

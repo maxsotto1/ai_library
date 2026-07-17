@@ -15,4 +15,4 @@ cols_to_drop:
   - "cpu_slo_lower"
 splits:
   [0.7, 0.1, 0.2]
-parquet_path: "all_data.parquet"
+parquet_path: "data/data.parquet"

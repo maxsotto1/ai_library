@@ -9,8 +9,8 @@ import yaml
 parent_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent_dir))
 
-from models.gmlp_class import gMLP_pipeline
-from models.xgb_class import XGBoost_pipeline
+from codebase.models.gmlp_class import gMLP_pipeline
+from codebase.models.xgb_class import XGBoost_pipeline
 
 saved_files_dir = parent_dir / "saved_files"
 
