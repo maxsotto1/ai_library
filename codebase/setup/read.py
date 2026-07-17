@@ -3,7 +3,7 @@ import pandas as pd
 import pyarrow.dataset as ds
 import yaml
 
-DATA_DIR = "data"
+DATA_DIR = "../monitoring-client/data"
 #DATA_DIR = "data/monitoring_parquet"
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
