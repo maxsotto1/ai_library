@@ -1,6 +1,6 @@
 import pandas as pd
 from models.gmlp_class import gMLP_pipeline
-from models.xgb_class import xgb_pipeline
+from models.xgb_class import XGBoost_pipeline
 import sys
 from pathlib import Path
 import yaml
@@ -18,13 +18,13 @@ pipeline_type = config["pipeline_type"]
 splits = config["splits"]
 cols_to_drop = config["cols_to_drop"]
 stride = config["stride"]
-
+parquet_path = config["parquet_path"]
 def get_last_window_data_and_train(train_window, train_horizon, targets, pipeline_type, splits, cols_to_drop):
     if pipeline_type == "gmlp":
         pipeline = gMLP_pipeline()
     elif pipeline_type == "xgb":
-        pipeline = xgb_pipeline()
-    df = pd.read_parquet("all_data.parquet")
+        pipeline = XGBoost_pipeline()
+    df = pd.read_parquet(parquet_path)
     if pipeline_type == "gmlp":
         dls, test_dl = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
         model, rmse = pipeline.train(dls, test_dl)
