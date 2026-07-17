@@ -6,12 +6,12 @@ from torch.nn import MSELoss
 from fastai.metrics import rmse
 from math import sqrt
 from sklearn.metrics import mean_squared_error
-from preprocess.sliding_window import apply_sliding_window
+from codebase.preprocess.sliding_window import apply_sliding_window
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
 import pandas as pd
-from helpers.to_saved_files import atomic_save
+from codebase.helpers.to_saved_files import atomic_save
 
 class gMLP_pipeline:
         def __init__(self):

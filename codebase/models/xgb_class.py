@@ -1,9 +1,9 @@
 from math import sqrt
 from sklearn.metrics import mean_squared_error
-from preprocess.sliding_window import apply_sliding_window
+from codebase.preprocess.sliding_window import apply_sliding_window
 import numpy as np
 import xgboost as xgb
-from helpers.to_saved_files import atomic_save
+from codebase.helpers.to_saved_files import atomic_save
 class XGBoost_pipeline:
         def __init__(self):
             self.scaler_y = None
