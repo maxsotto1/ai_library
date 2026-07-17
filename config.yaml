@@ -1,5 +1,5 @@
 # Application Configuration
-pipeline_type: "gMLP"
+pipeline_type: "gmlp"
 window: 96
 horizon: 96
 stride: 1
