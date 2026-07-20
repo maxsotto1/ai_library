@@ -1,6 +1,5 @@
 import pickle
-import sys
-from pathlib import Path
+import os
 
 import pandas as pd
 import torch
@@ -22,18 +21,18 @@ cols_to_drop = config.get("cols_to_drop", [])
 
 if pipeline_type == "gmlp":
     pipeline = gMLP_pipeline()
-    pipeline.model = torch.load(saved_files_dir / "trained_model.pth", map_location="cpu")
-    pipeline.scaler_x = pickle.load(open(saved_files_dir / "scaler_x.pkl", "rb"))
-    pipeline.scaler_y = pickle.load(open(saved_files_dir / "scaler_y.pkl", "rb"))
-    pipeline.clipping_min = pickle.load(open(saved_files_dir / "clipping_min.pkl", "rb"))
-    pipeline.clipping_max = pickle.load(open(saved_files_dir / "clipping_max.pkl", "rb"))
+    pipeline.model = torch.load(os.path.join(saved_files_dir,"trained_model.pth"), map_location="cpu")
+    pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x.pkl"), "rb"))
+    pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y.pkl"), "rb"))
+    pipeline.clipping_min = pickle.load(open(os.path.join(saved_files_dir, "clipping_min.pkl"), "rb"))
+    pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max.pkl"), "rb"))
 elif pipeline_type == "xgb":
     pipeline = XGBoost_pipeline()
-    pipeline.model = pickle.load(open(saved_files_dir / "trained_model.pkl", "rb"))
-    pipeline.scaler_x = pickle.load(open(saved_files_dir / "scaler_x.pkl", "rb"))
-    pipeline.scaler_y = pickle.load(open(saved_files_dir / "scaler_y.pkl", "rb"))
-    pipeline.clipping_min = pickle.load(open(saved_files_dir / "clipping_min.pkl", "rb"))
-    pipeline.clipping_max = pickle.load(open(saved_files_dir / "clipping_max.pkl", "rb"))
+    pipeline.model = pickle.load(open(os.path.join(saved_files_dir, "trained_model.pkl"), "rb"))
+    pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x.pkl"), "rb"))
+    pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y.pkl"), "rb"))
+    pipeline.clipping_min = pickle.load(open(os.path.join(saved_files_dir, "clipping_min.pkl"), "rb"))
+    pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max.pkl"), "rb"))
 else:
     raise ValueError(f"Unsupported pipeline type: {pipeline_type}")
 
