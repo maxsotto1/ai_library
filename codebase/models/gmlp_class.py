@@ -36,7 +36,8 @@ class gMLP_pipeline:
             Create all sliding windows first and then split
             the resulting samples into train/val/test.
             """
-
+            print(df.head())
+            print(f"Targets: {targets}")
             X, Y, scaler_x, scaler_y = apply_sliding_window(
                 df,
                 targets,
