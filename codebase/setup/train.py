@@ -25,6 +25,7 @@ def get_last_window_data_and_train(train_window, train_horizon, targets, pipelin
         pipeline = XGBoost_pipeline()
     df = pd.read_parquet(parquet_path)
     df = pivot_df(df)
+    df = df.dropna()
     if pipeline_type == "gmlp":
         dls, test_dl = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
         model, rmse = pipeline.train(dls, test_dl)
