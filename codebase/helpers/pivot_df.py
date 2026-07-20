@@ -2,9 +2,16 @@ def pivot_df(df):
     df_indexed = df.set_index("ts")
     resampled = df_indexed.groupby("metric")["value"].resample("300s").mean()
     resampled_df = resampled.reset_index()
+    
+    # 1. Pivot puts 'ts' into the Index position
     pivoted_df = resampled_df.pivot(index="ts", columns="metric", values="value")
-    plot_complete_timesteps(pivoted_df)
+    
+    # 2. Convert 'ts' back into a normal column
+    pivoted_df = pivoted_df.reset_index()
+    
+    # 3. Now this column filtering will work perfectly
     pivoted_df = pivoted_df[pivoted_df['ts'] >= '2026-07-10']
+    plot_complete_timesteps(pivoted_df)
     return pivoted_df
 
 import matplotlib.pyplot as plt
