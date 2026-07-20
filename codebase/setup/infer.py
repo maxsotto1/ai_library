@@ -11,6 +11,7 @@ sys.path.append(str(parent_dir))
 
 from codebase.models.gmlp_class import gMLP_pipeline
 from codebase.models.xgb_class import XGBoost_pipeline
+from codebase.helpers.pivot_df import pivot_df 
 
 saved_files_dir = parent_dir / "saved_files"
 
@@ -40,6 +41,8 @@ else:
     raise ValueError(f"Unsupported pipeline type: {pipeline_type}")
 
 df = pd.read_parquet(config["parquet_path"])
+df = pivot_df(df)
+df = df.dropna()
 last_window = df.iloc[-window:]
 
 window_tensor = pipeline.preprocess_inference(
