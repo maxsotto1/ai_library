@@ -79,6 +79,9 @@ class gMLP_pipeline:
         def train(self, dls, test_dl, lr=1e-3, epochs=10, patience=10):
         
             xb, yb = dls.one_batch()
+            print(xb.shape, yb.shape)
+            print("X batch sample data:\n", xb[:2])
+            print("Y batch sample data:\n", yb[:2])
             model = gMLP(
                 c_in=xb.shape[1],
                 c_out=yb.shape[1],
