@@ -21,7 +21,10 @@ cols_to_drop = config.get("cols_to_drop", [])
 
 if pipeline_type == "gmlp":
     pipeline = gMLP_pipeline()
-    pipeline.model = torch.load(os.path.join(saved_files_dir,"trained_model.pth"), map_location="cpu")
+    pipeline.model = torch.load(
+        os.path.join(saved_files_dir, "trained_model.pth"), 
+        map_location="cpu", 
+        weights_only=False)
     pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x.pkl"), "rb"))
     pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y.pkl"), "rb"))
     pipeline.clipping_min = pickle.load(open(os.path.join(saved_files_dir, "clipping_min.pkl"), "rb"))
