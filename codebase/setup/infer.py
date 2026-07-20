@@ -23,7 +23,7 @@ window = config["window"]
 targets = config["prediction_target"]
 cols_to_drop = config.get("cols_to_drop", [])
 
-if pipeline_type == "gMLP":
+if pipeline_type == "gmlp":
     pipeline = gMLP_pipeline()
     pipeline.model = torch.load(saved_files_dir / "trained_model.pth", map_location="cpu")
     pipeline.scaler_x = pickle.load(open(saved_files_dir / "scaler_x.pkl", "rb"))
