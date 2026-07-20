@@ -6,14 +6,11 @@ import pandas as pd
 import torch
 import yaml
 
-parent_dir = Path(__file__).resolve().parent.parent
-sys.path.append(str(parent_dir))
-
 from codebase.models.gmlp_class import gMLP_pipeline
 from codebase.models.xgb_class import XGBoost_pipeline
 from codebase.helpers.pivot_df import pivot_df 
 
-saved_files_dir = parent_dir / "saved_files"
+saved_files_dir = "codebase/saved_files"
 
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
