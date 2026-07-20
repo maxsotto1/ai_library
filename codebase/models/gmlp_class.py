@@ -137,7 +137,6 @@ class gMLP_pipeline:
             # 2. scale features ONLY
             feature_df = df_full.drop(columns=target_cols)
             X_feat = self.scaler_x.transform(feature_df)
-            X_feat = np.clip(X_feat, self.clipping_min, self.clipping_max).astype(np.float32)
 
             # 3. scale targets separately
             Y = self.scaler_y.transform(df_full[target_cols])
@@ -149,7 +148,6 @@ class gMLP_pipeline:
             window = X[-n_past:]
             window = window.T[None, ...]
             window = np.clip(window, self.clipping_min, self.clipping_max).astype(np.float32)
-
             return window
 
         def infer(self, window, device="cpu"):
