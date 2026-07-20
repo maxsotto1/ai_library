@@ -4,6 +4,7 @@ def pivot_df(df):
     resampled_df = resampled.reset_index()
     pivoted_df = resampled_df.pivot(index="ts", columns="metric", values="value")
     plot_complete_timesteps(pivoted_df)
+    pivoted_df = pivoted_df[pivoted_df['ts'] >= '2026-07-10']
     return pivoted_df
 
 import matplotlib.pyplot as plt
