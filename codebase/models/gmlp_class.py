@@ -119,11 +119,11 @@ class gMLP_pipeline:
             '''
 
             self.model = model
-            atomic_save(self.scaler_x, "scaler_x.pkl")  
-            atomic_save(self.scaler_y, "scaler_y.pkl")
-            atomic_save(self.model, "trained_model.pth", use_pytorch=True)
-            atomic_save(self.clipping_min, "clipping_min.pkl")
-            atomic_save(self.clipping_max, "clipping_max.pkl")
+            atomic_save(self.scaler_x, "codebase/saved_files/scaler_x.pkl")  
+            atomic_save(self.scaler_y, "codebase/saved_files/scaler_y.pkl")
+            atomic_save(self.model, "codebase/saved_files/trained_model.pth", use_pytorch=True)
+            atomic_save(self.clipping_min, "codebase/saved_files/clipping_min.pkl")
+            atomic_save(self.clipping_max, "codebase/saved_files/clipping_max.pkl")
             return model, rmse_val
         
         def preprocess_inference(self, df, targets, n_past, exclude_columns=None):
