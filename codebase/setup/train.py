@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 import yaml
 import codebase.setup.read
+from codebase.helpers.pivot_df import pivot_df
 
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
@@ -23,6 +24,7 @@ def get_last_window_data_and_train(train_window, train_horizon, targets, pipelin
     elif pipeline_type == "xgb":
         pipeline = XGBoost_pipeline()
     df = pd.read_parquet(parquet_path)
+    df = pivot_df(df)
     if pipeline_type == "gmlp":
         dls, test_dl = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
         model, rmse = pipeline.train(dls, test_dl)
