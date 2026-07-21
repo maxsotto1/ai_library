@@ -12,4 +12,4 @@ STANDARD_METRICS:
 cols_to_drop: ["ts"]
 splits:
   [0.7, 0.1, 0.2]
-parquet_path: "data/data.parquet"
+parquet_path: "data/orchestrator_data/data.parquet"

@@ -3,8 +3,7 @@ import pandas as pd
 import pyarrow.dataset as ds
 import yaml
 
-DATA_DIR = "../monitoring-client/data"
-#DATA_DIR = "data/monitoring_parquet"
+DATA_DIR = "data/orchestrator_data"
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 #get these from config.yaml instead of hardcoding them here!!
@@ -46,4 +45,4 @@ series = (
 print("\nResampled (300s) preview:\n", series)
 print("Metrics actually found in the dataset:", df["metric"].unique())
 # 5. Save the full dataframe to a Parquet file without the row index numbers
-df.to_parquet("data/data.parquet", index=False)
+df.to_parquet("data/orchestrator_data/data.parquet", index=False)
