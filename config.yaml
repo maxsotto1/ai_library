@@ -1,5 +1,5 @@
 # Application Configuration
-pipeline_type: "gmlp"
+pipeline_type: "xgb"
 window: 96
 horizon: 96
 stride: 1
