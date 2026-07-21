@@ -41,7 +41,8 @@ else:
 
 df = pd.read_parquet(config["parquet_path"])
 df = pivot_df(df)
-df = df.dropna()
+#df = df.dropna()
+df = df.set_index("ts").resample("30s").mean().interpolate("linear").bfill().ffill().reset_index()
 last_window = df.iloc[-window:]
 
 window_tensor = pipeline.preprocess_inference(
