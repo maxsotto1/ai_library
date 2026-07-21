@@ -1,4 +1,4 @@
-
+"""Metrics recorder script."""
 from __future__ import annotations
 import yaml
 
