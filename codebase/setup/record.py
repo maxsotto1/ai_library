@@ -41,7 +41,7 @@ RAW_METRICS: dict[str, list[str] | str] = {
     # "cpu_util_instance": ["100.104.109.71", "100.118.84.34"],
 }
 
-DEFAULT_OUT_DIR = "data"
+DEFAULT_OUT_DIR = "data/orchestrator_data"
 DEFAULT_POLL_INTERVAL_SECONDS = 5.0
 DEFAULT_FLUSH_MAX_ROWS = 5000
 DEFAULT_FLUSH_MAX_SECONDS = 60.0
