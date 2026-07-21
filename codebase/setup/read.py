@@ -3,7 +3,7 @@ import pandas as pd
 import pyarrow.dataset as ds
 import yaml
 
-DATA_DIR = "data/orchestrator_data"
+DATA_DIR = "data/orchestrator_data/collector"
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 #get these from config.yaml instead of hardcoding them here!!
