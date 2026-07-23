@@ -6,7 +6,7 @@ from torch.nn import MSELoss
 from fastai.metrics import rmse
 from math import sqrt
 from sklearn.metrics import mean_squared_error
-from codebase.preprocess.sliding_window import apply_sliding_window
+from codebase.helpers.sliding_window import apply_sliding_window
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
