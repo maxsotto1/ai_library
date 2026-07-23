@@ -1,6 +1,6 @@
 from math import sqrt
 from sklearn.metrics import mean_squared_error
-from codebase.preprocess.sliding_window import apply_sliding_window
+from codebase.helpers.sliding_window import apply_sliding_window
 import numpy as np
 import xgboost as xgb
 from codebase.helpers.to_saved_files import atomic_save
