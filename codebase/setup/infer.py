@@ -22,7 +22,7 @@ def inference():
     if pipeline_type == "gmlp":
         pipeline = gMLP_pipeline()
         pipeline.model = torch.load(
-            os.path.join(saved_files_dir, "trained_model.pth"), 
+            os.path.join(saved_files_dir, "trained_model_gmlp.pth"), 
             map_location="cpu", 
             weights_only=False)
         pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x_gmlp.pkl"), "rb"))
@@ -39,7 +39,7 @@ def inference():
     elif pipeline_type == "itransformer":
         pipeline = iTransformer_pipeline()
         pipeline.model = torch.load(
-            os.path.join(saved_files_dir, "trained_model_itransformer.pkl"), 
+            os.path.join(saved_files_dir, "trained_model_itransformer.pth"), 
             map_location="cpu", 
             weights_only=False)
         pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x_itransformer.pkl"), "rb"))

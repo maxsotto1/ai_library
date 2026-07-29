@@ -216,7 +216,7 @@ class iTransformer_pipeline:
         rmse_val = sqrt(mean_squared_error(preds, targets))
 
         self.model = model
-        atomic_save(self.model, "codebase/saved_files/trained_model_itransformer.pkl")
+        atomic_save(self.model, "codebase/saved_files/trained_model_itransformer.pth",use_pytorch=True)
         atomic_save(self.scaler_x, "codebase/saved_files/scaler_x_itransformer.pkl")
         atomic_save(self.scaler_y, "codebase/saved_files/scaler_y_itransformer.pkl")
         return model, rmse_val
