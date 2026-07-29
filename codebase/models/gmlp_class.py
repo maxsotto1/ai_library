@@ -78,8 +78,12 @@ class gMLP_pipeline:
 
             return dls, test_dl
         
-        def train(self, dls, test_dl, lr=1e-3, epochs=10, patience=10):
-        
+        def train(self, dls, test_dl):
+
+            patience = self.params.get("patience")
+            epochs = self.params.get("epochs")
+            lr = self.params.get("lr")
+            
             xb, yb = dls.one_batch()
             print(xb.shape, yb.shape)
             print("X batch sample data:\n", xb[:2])
