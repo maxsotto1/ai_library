@@ -44,6 +44,11 @@ def inference():
             weights_only=False)
         pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x_itransformer.pkl"), "rb"))
         pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y_itransformer.pkl"), "rb"))
+        target_cols = list(targets) if isinstance(targets, (list, tuple)) else [targets]
+        pipeline.target_columns = target_cols
+        pipeline.n_past = window
+        pipeline.n_targets = len(target_cols)
+        pipeline.time_column = "ts"
     else:
         raise ValueError(f"Unsupported pipeline type: {pipeline_type}")
 
