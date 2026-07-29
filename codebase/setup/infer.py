@@ -57,6 +57,10 @@ def inference():
     df = df.set_index("ts").resample("30s").mean().interpolate("linear").bfill().ffill().reset_index()
     last_window = df.iloc[-window:]
 
+    if pipeline_type == "itransformer":
+        excluded = set(cols_to_drop + pipeline.target_columns + ([pipeline.time_column] if pipeline.time_column else []))
+        pipeline.feature_columns = [col for col in last_window.columns if col not in excluded]
+
     window_tensor = pipeline.preprocess_inference(
         last_window,
         targets,
