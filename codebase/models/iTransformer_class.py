@@ -122,7 +122,7 @@ class iTransformer_pipeline:
         stride=96,
         exclude_columns=None,
         bs=12,
-        time_column="sample_time",
+        time_column="ts",
     ):
         """Build chronological, target-disjoint lazy train/val/test windows."""
         if len(splits) != 3 or any(value <= 0 for value in splits) or not np.isclose(sum(splits), 1):
