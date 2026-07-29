@@ -3,6 +3,7 @@ from sklearn.metrics import mean_squared_error
 from codebase.helpers.sliding_window import apply_sliding_window
 import numpy as np
 import xgboost as xgb
+import yaml
 from codebase.helpers.to_saved_files import atomic_save
 class XGBoost_pipeline:
         def __init__(self):
@@ -11,6 +12,9 @@ class XGBoost_pipeline:
             self.clipping_min = None
             self.clipping_max = None
             self.model = None
+            with open("config.yaml", "r") as f:
+                config = yaml.safe_load(f)
+                self.params = config.get("xgb_params", {})
 
         def preprocess_splits(
             self,
@@ -77,22 +81,7 @@ class XGBoost_pipeline:
             y_test = test_ds[1].astype(np.float32)
             y_test = y_test.reshape(y_test.shape[0],-1)
 
-            model = xgb.XGBRegressor(
-                objective='reg:squarederror',
-                n_estimators=100,          # fewer trees → faster
-                learning_rate=0.1,         # moderately fast learning
-                max_depth=4,               # shallow trees → less memory and overfitting
-                subsample=0.8,             # use 80% of data per tree → faster and regularized
-                colsample_bytree=0.8,      # use 80% of features per tree
-                min_child_weight=3,        # prevents overly deep splits (regularization)
-                gamma=0.1,                 # small penalty for leaf node splits
-                reg_lambda=1.0,            # L2 regularization (default = 1)
-                reg_alpha=0.0,             # no L1 regularization (set >0 if sparse data)
-                tree_method='hist',       
-                predictor='cpu_predictor',
-                random_state=42,
-                n_jobs=-1    
-                )
+            model = xgb.XGBRegressor(**self.params)
 
             model.fit(x_train, y_train)
             preds = model.predict(x_test)

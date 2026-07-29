@@ -9,8 +9,7 @@ from sklearn.metrics import mean_squared_error
 from codebase.helpers.sliding_window import apply_sliding_window
 import numpy as np
 import torch
-import matplotlib.pyplot as plt
-import pandas as pd
+import yaml
 from codebase.helpers.to_saved_files import atomic_save
 
 class gMLP_pipeline:
@@ -20,6 +19,9 @@ class gMLP_pipeline:
             self.clipping_min = None
             self.clipping_max = None
             self.model = None
+            with open("config.yaml", "r") as f:
+                config = yaml.safe_load(f)
+                self.params = config.get("gmlp_params", {}) 
 
         def preprocess_splits(
             self,
@@ -82,14 +84,18 @@ class gMLP_pipeline:
             print(xb.shape, yb.shape)
             print("X batch sample data:\n", xb[:2])
             print("Y batch sample data:\n", yb[:2])
+            d_model = self.params.get("d_model")
+            d_ffn = self.params.get("d_ffn")
+            depth = self.params.get("depth")
+            patch_size = self.params.get("patch_size")
             model = gMLP(
                 c_in=xb.shape[1],
                 c_out=yb.shape[1],
                 seq_len=xb.shape[2],
-                d_model=64,
-                d_ffn=128,
-                depth=2,
-                patch_size=1
+                d_model=d_model,
+                d_ffn=d_ffn,
+                depth=depth,
+                patch_size=patch_size,
             )
 
             learn = Learner(
