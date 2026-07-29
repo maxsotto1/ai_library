@@ -20,7 +20,7 @@ gmlp:
     depth: 2
     patch_size: 1
     epochs: 10
-    lr: 1e-3
+    lr: 0.001
     patience: 10
 xgb:
   model_params:
