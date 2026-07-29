@@ -21,7 +21,7 @@ class gMLP_pipeline:
             self.model = None
             with open("config.yaml", "r") as f:
                 config = yaml.safe_load(f)
-                self.params = config.get("gmlp_params", {}) 
+                self.params = config.get("gmlp", {}).get("model_params", {})
 
         def preprocess_splits(
             self,

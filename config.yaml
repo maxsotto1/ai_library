@@ -19,8 +19,8 @@ gmlp:
     d_ff: 128
     depth: 2
     patch_size: 1
-    
-xgboost:
+
+xgb:
   model_params:
     n_estimators: 100
     max_depth: 4
