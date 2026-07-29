@@ -14,7 +14,7 @@ from torch.nn import MSELoss
 from torch.utils.data import Dataset
 from tsai.learner import Learner
 from codebase.helpers.to_saved_files import atomic_save
-from models.itransformer_model import Model
+from codebase.models.itransformer_model import Model
 
 
 def _time_features(values):
