@@ -4,53 +4,61 @@ import os
 import pandas as pd
 import torch
 import yaml
-
+from codebase.models.iTransformer_class import iTransformer_pipeline
 from codebase.models.gmlp_class import gMLP_pipeline
 from codebase.models.xgb_class import XGBoost_pipeline
 from codebase.helpers.pivot_df import pivot_df 
 
 saved_files_dir = "codebase/saved_files"
+def inference():
+    with open("config.yaml", "r") as f:
+        config = yaml.safe_load(f)
 
-with open("config.yaml", "r") as f:
-    config = yaml.safe_load(f)
+    pipeline_type = config["pipeline_type"]
+    window = config["window"]
+    targets = config["prediction_target"]
+    cols_to_drop = config.get("cols_to_drop", [])
 
-pipeline_type = config["pipeline_type"]
-window = config["window"]
-targets = config["prediction_target"]
-cols_to_drop = config.get("cols_to_drop", [])
+    if pipeline_type == "gmlp":
+        pipeline = gMLP_pipeline()
+        pipeline.model = torch.load(
+            os.path.join(saved_files_dir, "trained_model.pth"), 
+            map_location="cpu", 
+            weights_only=False)
+        pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x_gmlp.pkl"), "rb"))
+        pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y_gmlp.pkl"), "rb"))
+        pipeline.clipping_min = pickle.load(open(os.path.join(saved_files_dir, "clipping_min_gmlp.pkl"), "rb"))
+        pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max_gmlp.pkl"), "rb"))
+    elif pipeline_type == "xgb":
+        pipeline = XGBoost_pipeline()
+        pipeline.model = pickle.load(open(os.path.join(saved_files_dir, "trained_model_xgb.pkl"), "rb"))
+        pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x_xgb.pkl"), "rb"))
+        pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y_xgb.pkl"), "rb"))
+        pipeline.clipping_min = pickle.load(open(os.path.join(saved_files_dir, "clipping_min_xgb.pkl"), "rb"))
+        pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max_xgb.pkl"), "rb"))
+    elif pipeline_type == "itransformer":
+        pipeline = iTransformer_pipeline()
+        pipeline.model = torch.load(
+            os.path.join(saved_files_dir, "trained_model_itransformer.pkl"), 
+            map_location="cpu", 
+            weights_only=False)
+        pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x_itransformer.pkl"), "rb"))
+        pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y_itransformer.pkl"), "rb"))
+    else:
+        raise ValueError(f"Unsupported pipeline type: {pipeline_type}")
 
-if pipeline_type == "gmlp":
-    pipeline = gMLP_pipeline()
-    pipeline.model = torch.load(
-        os.path.join(saved_files_dir, "trained_model.pth"), 
-        map_location="cpu", 
-        weights_only=False)
-    pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x.pkl"), "rb"))
-    pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y.pkl"), "rb"))
-    pipeline.clipping_min = pickle.load(open(os.path.join(saved_files_dir, "clipping_min.pkl"), "rb"))
-    pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max.pkl"), "rb"))
-elif pipeline_type == "xgb":
-    pipeline = XGBoost_pipeline()
-    pipeline.model = pickle.load(open(os.path.join(saved_files_dir, "trained_model.pkl"), "rb"))
-    pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x.pkl"), "rb"))
-    pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y.pkl"), "rb"))
-    pipeline.clipping_min = pickle.load(open(os.path.join(saved_files_dir, "clipping_min.pkl"), "rb"))
-    pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max.pkl"), "rb"))
-else:
-    raise ValueError(f"Unsupported pipeline type: {pipeline_type}")
+    df = pd.read_parquet(config["parquet_path"])
+    df = pivot_df(df)
+    df = df.set_index("ts").resample("30s").mean().interpolate("linear").bfill().ffill().reset_index()
+    last_window = df.iloc[-window:]
 
-df = pd.read_parquet(config["parquet_path"])
-df = pivot_df(df)
-#df = df.dropna()
-df = df.set_index("ts").resample("30s").mean().interpolate("linear").bfill().ffill().reset_index()
-last_window = df.iloc[-window:]
+    window_tensor = pipeline.preprocess_inference(
+        last_window,
+        targets,
+        n_past=window,
+        exclude_columns=cols_to_drop,
+    )
 
-window_tensor = pipeline.preprocess_inference(
-    last_window,
-    targets,
-    n_past=window,
-    exclude_columns=cols_to_drop,
-)
-predictions = pipeline.infer(window_tensor)
-
-print(predictions)
+    predictions = pipeline.infer(window_tensor)
+    print(f"Predictions from {pipeline_type} model: {predictions}")
+    return predictions

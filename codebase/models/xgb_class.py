@@ -100,11 +100,11 @@ class XGBoost_pipeline:
             targets = self.scaler_y.inverse_transform((y_test))
             rmse_val = sqrt(mean_squared_error(preds, targets))
             self.model = model
-            atomic_save(self.model, "codebase/saved_files/trained_model.pkl")
-            atomic_save(self.scaler_x, "codebase/saved_files/scaler_x.pkl")
-            atomic_save(self.scaler_y, "codebase/saved_files/scaler_y.pkl")
-            atomic_save(self.clipping_min, "codebase/saved_files/clipping_min.pkl")
-            atomic_save(self.clipping_max, "codebase/saved_files/clipping_max.pkl")
+            atomic_save(self.model, "codebase/saved_files/trained_model_xgb.pkl")
+            atomic_save(self.scaler_x, "codebase/saved_files/scaler_x_xgb.pkl")
+            atomic_save(self.scaler_y, "codebase/saved_files/scaler_y_xgb.pkl")
+            atomic_save(self.clipping_min, "codebase/saved_files/clipping_min_xgb.pkl")
+            atomic_save(self.clipping_max, "codebase/saved_files/clipping_max_xgb.pkl")
             return model, rmse_val
     
 

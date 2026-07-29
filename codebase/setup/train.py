@@ -1,9 +1,9 @@
 import pandas as pd
 from codebase.models.gmlp_class import gMLP_pipeline
 from codebase.models.xgb_class import XGBoost_pipeline
-import sys
 from pathlib import Path
 import yaml
+from codebase.models.iTransformer_class import iTransformer_pipeline
 import codebase.setup.read
 from codebase.helpers.pivot_df import pivot_df
 
@@ -23,9 +23,10 @@ def get_last_window_data_and_train(train_window, train_horizon, targets, pipelin
         pipeline = gMLP_pipeline()
     elif pipeline_type == "xgb":
         pipeline = XGBoost_pipeline()
+    elif pipeline_type == "itransformer":
+        pipeline = iTransformer_pipeline()
     df = pd.read_parquet(parquet_path)
     df = pivot_df(df)
-    #df = df.dropna()
     df = df.set_index("ts").resample("30s").mean().interpolate("linear").bfill().ffill().reset_index()
     if pipeline_type == "gmlp":
         dls, test_dl = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
@@ -33,6 +34,9 @@ def get_last_window_data_and_train(train_window, train_horizon, targets, pipelin
     elif pipeline_type == "xgb":
         train_ds, val_ds, test_ds = pipeline.preprocess_splits(df,targets, splits, train_horizon, train_window, stride, cols_to_drop)
         model, rmse = pipeline.train(train_ds, val_ds, test_ds)
+    elif pipeline_type == "itransformer":
+        dls, test_dls = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
+        model, rmse = pipeline.train(dls, test_dls)
     print(f"Trained {pipeline_type} model with RMSE: {rmse}")
 
 get_last_window_data_and_train(train_window, train_horizon, targets, pipeline_type, splits, cols_to_drop)
