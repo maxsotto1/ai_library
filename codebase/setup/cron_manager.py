@@ -76,7 +76,3 @@ def remove_from_cron():
         print(f"Removed entry:\n{command}")
     else:
         print("Failed to update crontab.", file=sys.stderr)
-
-        
-if __name__ == "__main__":
-    add_to_cron()
