@@ -18,7 +18,7 @@ splits = config["splits"]
 cols_to_drop = config["cols_to_drop"]
 stride = config["stride"]
 parquet_path = config["parquet_path"]
-resample_frequency = config["resample_frequency"]
+resample_frequency = config["data_frequency"]
 def get_last_window_data_and_train(train_window, train_horizon, targets, pipeline_type, splits, cols_to_drop):
     if pipeline_type == "gmlp":
         pipeline = gMLP_pipeline()
