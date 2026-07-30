@@ -3,9 +3,11 @@ import pandas as pd
 import pyarrow.dataset as ds
 import yaml
 
-DATA_DIR = "data/orchestrator_data/collector"
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
+    parquet_path = config["parquet_path"]
+    DATA_DIR = config["data_dir"]
+
 #get these from config.yaml instead of hardcoding them here!!
 STANDARD_METRICS = config["STANDARD_METRICS"]
 
@@ -45,4 +47,4 @@ series = (
 print("\nResampled (30s) preview:\n", series)
 print("Metrics actually found in the dataset:", df["metric"].unique())
 # 5. Save the full dataframe to a Parquet file without the row index numbers
-df.to_parquet("data/orchestrator_data/data.parquet", index=False)
+df.to_parquet(parquet_path, index=False)

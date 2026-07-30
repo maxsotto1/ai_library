@@ -31,6 +31,11 @@ from swchmonclient import (
 # exist on the broker. Samples are stamped at poll time.
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
+    DEFAULT_OUT_DIR = config["data_dir"]
+    DEFAULT_POLL_INTERVAL_SECONDS = config["poll_interval_seconds"]
+    DEFAULT_FLUSH_MAX_ROWS = config["flush_max_rows"]
+    DEFAULT_FLUSH_MAX_SECONDS = config["flush_max_seconds"]
+
 #get these from config.yaml instead of hardcoding them here!!
 STANDARD_METRICS = config["STANDARD_METRICS"]
 
@@ -41,7 +46,6 @@ RAW_METRICS: dict[str, list[str] | str] = {
     # "cpu_util_instance": ["100.104.109.71", "100.118.84.34"],
 }
 
-DEFAULT_OUT_DIR = "data/orchestrator_data/collector"
 DEFAULT_POLL_INTERVAL_SECONDS = 5.0
 DEFAULT_FLUSH_MAX_ROWS = 5000
 DEFAULT_FLUSH_MAX_SECONDS = 60.0
