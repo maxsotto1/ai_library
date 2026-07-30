@@ -300,7 +300,6 @@ def main() -> int:
     logger.info("Done. Total rows written: %d", sink.total_rows_written)
     return 0
 
-
 if __name__ == "__main__":
     raise SystemExit(main())
 

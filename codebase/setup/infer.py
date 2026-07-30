@@ -51,11 +51,14 @@ def inference():
         pipeline.time_column = "ts"
     else:
         raise ValueError(f"Unsupported pipeline type: {pipeline_type}")
-
+    data_frequency = config.get("data_frequency")
     df = pd.read_parquet(config["parquet_path"])
     df = pivot_df(df)
-    df = df.set_index("ts").resample("30s").mean().interpolate("linear").bfill().ffill().reset_index()
+    df = df.set_index("ts").resample(data_frequency).mean().interpolate("linear").bfill().ffill().reset_index()
     last_window = df.iloc[-window:]
+    horizon = config.get("horizon")
+    first_predicted = last_window.iloc[-1]["ts"] + pd.Timedelta(seconds=data_frequency.total_seconds())
+    last_predicted = first_predicted + pd.Timedelta(seconds=data_frequency.total_seconds() * (horizon - 1))
 
     if pipeline_type == "itransformer":
         excluded = set(cols_to_drop + pipeline.target_columns + ([pipeline.time_column] if pipeline.time_column else []))
@@ -70,4 +73,7 @@ def inference():
 
     predictions = pipeline.infer(window_tensor)
     print(f"Predictions from {pipeline_type} model: {predictions}")
-    return predictions
+    print(f"First predicted timestamp: {first_predicted}")
+    print(f"Last predicted timestamp: {last_predicted}")
+    print(f"Data frequency: {data_frequency}")
+    return predictions, first_predicted, last_predicted, data_frequency
