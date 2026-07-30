@@ -18,6 +18,7 @@ splits = config["splits"]
 cols_to_drop = config["cols_to_drop"]
 stride = config["stride"]
 parquet_path = config["parquet_path"]
+resample_frequency = config["resample_frequency"]
 def get_last_window_data_and_train(train_window, train_horizon, targets, pipeline_type, splits, cols_to_drop):
     if pipeline_type == "gmlp":
         pipeline = gMLP_pipeline()
@@ -27,7 +28,7 @@ def get_last_window_data_and_train(train_window, train_horizon, targets, pipelin
         pipeline = iTransformer_pipeline()
     df = pd.read_parquet(parquet_path)
     df = pivot_df(df)
-    df = df.set_index("ts").resample("30s").mean().interpolate("linear").bfill().ffill().reset_index()
+    df = df.set_index("ts").resample(resample_frequency).mean().interpolate("linear").bfill().ffill().reset_index()
     if pipeline_type == "gmlp":
         dls, test_dl = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
         model, rmse = pipeline.train(dls, test_dl)

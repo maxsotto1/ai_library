@@ -54,8 +54,16 @@ def inference():
         raise ValueError(f"Unsupported pipeline type: {pipeline_type}")
     data_frequency = pd.to_timedelta(config.get("data_frequency"))
     df = pd.read_parquet(config["parquet_path"])
-    df = pivot_df(df)
-    df = df.set_index("ts").resample(data_frequency).mean().interpolate("linear").bfill().ffill().reset_index()
+    max_ts = df["ts"].max().floor(data_frequency)
+    df = pivot_df(df).set_index("ts")
+
+    # Create a full time index from min to max timestamp
+    full_idx = pd.date_range(start=df.index.min(), end=max_ts, freq=data_frequency)
+    df = df.reindex(full_idx)
+
+    # Forward fill trailing values (so the newest polled metrics extend to the latest timestamp)
+    df = df.interpolate("linear").ffill().bfill().reset_index().rename(columns={"index": "ts"})
+
     last_window = df.iloc[-window:]
     horizon = config.get("horizon")
     first_predicted = last_window.iloc[-1]["ts"] + pd.Timedelta(seconds=data_frequency.total_seconds())
