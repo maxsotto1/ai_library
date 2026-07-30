@@ -2,11 +2,16 @@
 import pandas as pd
 import pyarrow.dataset as ds
 import yaml
+import os
 
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
-    parquet_path = config["parquet_path"]
-    DATA_DIR = config["data_dir"]
+    parquet_path = os.path.expanduser(config["parquet_path"])
+    DATA_DIR = os.path.expanduser(config["data_dir"]) 
+
+# 2. Create the directory on disk if it doesn't exist yet
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(os.path.dirname(parquet_path), exist_ok=True)
 
 #get these from config.yaml instead of hardcoding them here!!
 STANDARD_METRICS = config["STANDARD_METRICS"]

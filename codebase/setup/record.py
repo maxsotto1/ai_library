@@ -10,7 +10,7 @@ import threading
 import time
 import uuid
 from typing import Any
-
+import os
 import pyarrow as pa
 import pyarrow.parquet as pq
 
@@ -31,7 +31,8 @@ from swchmonclient import (
 # exist on the broker. Samples are stamped at poll time.
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
-    DEFAULT_OUT_DIR = config["data_dir"]
+    DEFAULT_OUT_DIR = os.path.expanduser(config["data_dir"])
+    os.makedirs(DEFAULT_OUT_DIR, exist_ok=True)
     DEFAULT_POLL_INTERVAL_SECONDS = config["poll_interval_seconds"]
     DEFAULT_FLUSH_MAX_ROWS = config["flush_max_rows"]
     DEFAULT_FLUSH_MAX_SECONDS = config["flush_max_seconds"]
