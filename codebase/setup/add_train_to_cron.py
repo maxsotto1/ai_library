@@ -1,19 +1,20 @@
 import os
 import sys
 import subprocess
+import yaml
 
 def add_to_cron():
     # 1. Gather current execution context
     python_path = sys.executable  # Path to current Python virtualenv/environment
     working_dir = os.getcwd()      # Directory where this script is run
-    
+    retrain_frequency = yaml.safe_load(open("config.yaml", "r")).get("retrain_frequency") 
     # 2. Construct the full command
     # Runs python -m codebase.setup.train and appends logs to cron.log
     log_file = os.path.join(working_dir, "cron.log")
     command = f"cd {working_dir} && {python_path} -m codebase.setup.train >> {log_file} 2>&1"
     
-    # 3. Define schedule: Every 30 minutes (*/30 * * * *)
-    cron_schedule = "*/30 * * * *"
+    # 3. Define schedule: Every {retrain_frequency} (*/{retrain_frequency} * * * *)
+    cron_schedule = f"*/{retrain_frequency.split('m')[0]} * * * *"
     cron_entry = f"{cron_schedule} {command}"
     
     # 4. Fetch existing crontab
