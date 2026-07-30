@@ -39,8 +39,10 @@ xgb:
     objective: "reg:squarederror"
 retrain_frequency: "30m"
 data_frequency: "30s"
-parquet_path: "data/orchestrator_data/data.parquet"
-data_dir: "data/orchestrator_data/collector"
+#parquet_path: "data/orchestrator_data/data.parquet"
+parquet_path: "~/.local/share/ai_library/data.parquet"
+#data_dir: "data/orchestrator_data/collector"
+data_dir: "~/.local/share/ai_library/collector"
 poll_interval_seconds: 5.0
 flush_max_rows: 5000
 flush_max_seconds: 60.0
