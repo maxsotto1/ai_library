@@ -41,5 +41,42 @@ def add_to_cron():
     else:
         print("Failed to update crontab.", file=sys.stderr)
 
+def remove_from_cron():
+    # 1. Gather current execution context
+    python_path = sys.executable  # Path to current Python virtualenv/environment
+    working_dir = os.getcwd()      # Directory where this script is run
+    retrain_frequency = yaml.safe_load(open("config.yaml", "r")).get("retrain_frequency") 
+    # 2. Construct the full command
+    log_file = os.path.join(working_dir, "cron.log")
+    command = f"cd {working_dir} && {python_path} -m codebase.setup.train >> {log_file} 2>&1"
+    
+    # 3. Fetch existing crontab
+    try:
+        current_cron = subprocess.check_output(
+            ["crontab", "-l"], stderr=subprocess.DEVNULL
+        ).decode("utf-8")
+    except subprocess.CalledProcessError:
+        print("No crontab exists for this user. Nothing to remove.")
+        return
+        
+    # 4. Remove the specific job entry if it exists
+    if command not in current_cron:
+        print("Job not found in crontab. No changes made.")
+        return
+
+    new_cron = "\n".join(
+        line for line in current_cron.splitlines() if command not in line
+    ) + "\n"
+    
+    process = subprocess.Popen(["crontab", "-"], stdin=subprocess.PIPE, text=True)
+    process.communicate(input=new_cron)
+    
+    if process.returncode == 0:
+        print("Successfully removed job from cron!")
+        print(f"Removed entry:\n{command}")
+    else:
+        print("Failed to update crontab.", file=sys.stderr)
+
+        
 if __name__ == "__main__":
     add_to_cron()
