@@ -51,7 +51,7 @@ def inference():
         pipeline.time_column = "ts"
     else:
         raise ValueError(f"Unsupported pipeline type: {pipeline_type}")
-    data_frequency = config.get("data_frequency")
+    data_frequency = pd.to_timedelta(config.get("data_frequency"))
     df = pd.read_parquet(config["parquet_path"])
     df = pivot_df(df)
     df = df.set_index("ts").resample(data_frequency).mean().interpolate("linear").bfill().ffill().reset_index()
