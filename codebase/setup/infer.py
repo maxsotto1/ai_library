@@ -8,6 +8,7 @@ from codebase.models.iTransformer_class import iTransformer_pipeline
 from codebase.models.gmlp_class import gMLP_pipeline
 from codebase.models.xgb_class import XGBoost_pipeline
 from codebase.helpers.pivot_df import pivot_df 
+import codebase.setup.read
 
 saved_files_dir = "codebase/saved_files"
 def inference():
