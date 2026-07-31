@@ -22,7 +22,7 @@ class gMLP_pipeline:
             with open("config.yaml", "r") as f:
                 config = yaml.safe_load(f)
                 self.params = config.get("gmlp", {}).get("model_params", {})
-
+                self.saved_files_dir = config.get("saved_files_dir")
         def preprocess_splits(
             self,
             df,
@@ -83,7 +83,7 @@ class gMLP_pipeline:
             patience = self.params.get("patience")
             epochs = self.params.get("epochs")
             lr = self.params.get("lr")
-            
+
             xb, yb = dls.one_batch()
             print(xb.shape, yb.shape)
             print("X batch sample data:\n", xb[:2])
@@ -129,11 +129,11 @@ class gMLP_pipeline:
             '''
 
             self.model = model
-            atomic_save(self.scaler_x, "codebase/saved_files/scaler_x_gmlp.pkl")  
-            atomic_save(self.scaler_y, "codebase/saved_files/scaler_y_gmlp.pkl")
-            atomic_save(self.model, "codebase/saved_files/trained_model_gmlp.pth", use_pytorch=True)
-            atomic_save(self.clipping_min, "codebase/saved_files/clipping_min_gmlp.pkl")
-            atomic_save(self.clipping_max, "codebase/saved_files/clipping_max_gmlp.pkl")
+            atomic_save(self.scaler_x, f"{self.saved_files_dir}/scaler_x_gmlp.pkl")  
+            atomic_save(self.scaler_y, f"{self.saved_files_dir}/scaler_y_gmlp.pkl")
+            atomic_save(self.model, f"{self.saved_files_dir}/trained_model_gmlp.pth", use_pytorch=True)
+            atomic_save(self.clipping_min, f"{self.saved_files_dir}/clipping_min_gmlp.pkl")
+            atomic_save(self.clipping_max, f"{self.saved_files_dir}/clipping_max_gmlp.pkl")
             return model, rmse_val
         
         def preprocess_inference(self, df, targets, n_past, exclude_columns=None):

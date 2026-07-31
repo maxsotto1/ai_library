@@ -43,6 +43,7 @@ data_frequency: "30s"
 parquet_path: "~/.local/share/ai_library/data.parquet"
 #data_dir: "data/orchestrator_data/collector"
 data_dir: "~/.local/share/ai_library/collector"
+saved_files_dir: "~/.local/share/ai_library/saved_models"
 poll_interval_seconds: 5.0
 flush_max_rows: 5000
 flush_max_seconds: 60.0

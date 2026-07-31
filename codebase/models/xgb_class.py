@@ -15,7 +15,7 @@ class XGBoost_pipeline:
             with open("config.yaml", "r") as f:
                 config = yaml.safe_load(f)
                 self.params = config.get("xgb", {}).get("model_params", {})
-
+                self.saved_files_dir = config.get("saved_files_dir")
         def preprocess_splits(
             self,
             df,
@@ -89,11 +89,11 @@ class XGBoost_pipeline:
             targets = self.scaler_y.inverse_transform((y_test))
             rmse_val = sqrt(mean_squared_error(preds, targets))
             self.model = model
-            atomic_save(self.model, "codebase/saved_files/trained_model_xgb.pkl")
-            atomic_save(self.scaler_x, "codebase/saved_files/scaler_x_xgb.pkl")
-            atomic_save(self.scaler_y, "codebase/saved_files/scaler_y_xgb.pkl")
-            atomic_save(self.clipping_min, "codebase/saved_files/clipping_min_xgb.pkl")
-            atomic_save(self.clipping_max, "codebase/saved_files/clipping_max_xgb.pkl")
+            atomic_save(self.model, f"{self.saved_files_dir}/trained_model_xgb.pkl")
+            atomic_save(self.scaler_x, f"{self.saved_files_dir}/scaler_x_xgb.pkl")
+            atomic_save(self.scaler_y, f"{self.saved_files_dir}/scaler_y_xgb.pkl")
+            atomic_save(self.clipping_min, f"{self.saved_files_dir}/clipping_min_xgb.pkl")
+            atomic_save(self.clipping_max, f"{self.saved_files_dir}/clipping_max_xgb.pkl")
             return model, rmse_val
     
 

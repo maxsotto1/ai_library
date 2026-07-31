@@ -15,7 +15,7 @@ from torch.utils.data import Dataset
 from tsai.learner import Learner
 from codebase.helpers.to_saved_files import atomic_save
 from codebase.models.itransformer_model import Model
-
+import yaml
 
 def _time_features(values):
     """Official iTransformer calendar features for minute-resolution data."""
@@ -111,6 +111,9 @@ class iTransformer_pipeline:
         self.target_columns = None
         self.feature_columns = None
         self.time_column = None
+        with open("config.yaml", "r") as f:
+            config = yaml.safe_load(f)
+            self.saved_files_dir = config.get("saved_files_dir")
 
     def preprocess_splits(
         self,
@@ -216,9 +219,9 @@ class iTransformer_pipeline:
         rmse_val = sqrt(mean_squared_error(preds, targets))
 
         self.model = model
-        atomic_save(self.model, "codebase/saved_files/trained_model_itransformer.pth",use_pytorch=True)
-        atomic_save(self.scaler_x, "codebase/saved_files/scaler_x_itransformer.pkl")
-        atomic_save(self.scaler_y, "codebase/saved_files/scaler_y_itransformer.pkl")
+        atomic_save(self.model, f"{self.saved_files_dir}/trained_model_itransformer.pth",use_pytorch=True)
+        atomic_save(self.scaler_x, f"{self.saved_files_dir}/scaler_x_itransformer.pkl")
+        atomic_save(self.scaler_y, f"{self.saved_files_dir}/scaler_y_itransformer.pkl")
         return model, rmse_val
 
     def preprocess_inference(self, df, targets, n_past, exclude_columns=None):
