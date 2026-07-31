@@ -46,10 +46,10 @@ print(f"\n{len(df)} samples, {df['ts'].min()} .. {df['ts'].max()}")
 series = (
     df.set_index("ts")
     .groupby("metric")["value"]
-    .resample(f"{resample_frequency}s")
+    .resample(f"{resample_frequency}")
     .mean()
 )
-print(f"\nResampled {resample_frequency}s preview:\n", series)
+print(f"\nResampled {resample_frequency} preview:\n", series)
 print("Metrics actually found in the dataset:", df["metric"].unique())
 # 5. Save the full dataframe to a Parquet file without the row index numbers
 df.to_parquet(parquet_path, index=False)
