@@ -7,6 +7,7 @@ def atomic_save(obj, final_path, use_pytorch=False):
     Safely and atomically writes an object to disk.
     If use_pytorch=True, uses torch.save. Otherwise, uses pickle.
     """
+    print("saving to", final_path)
     temp_path = final_path + ".tmp"
     try:
         if use_pytorch:

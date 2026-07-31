@@ -33,6 +33,7 @@ def inference():
         pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max_gmlp.pkl"), "rb"))
     elif pipeline_type == "xgb":
         pipeline = XGBoost_pipeline()
+        print("loading xgboost model from", os.path.join(saved_files_dir, "trained_model_xgb.pkl"))
         pipeline.model = pickle.load(open(os.path.join(saved_files_dir, "trained_model_xgb.pkl"), "rb"))
         pipeline.scaler_x = pickle.load(open(os.path.join(saved_files_dir, "scaler_x_xgb.pkl"), "rb"))
         pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y_xgb.pkl"), "rb"))
