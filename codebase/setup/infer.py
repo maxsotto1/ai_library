@@ -15,6 +15,7 @@ def inference():
     with open("config.yaml", "r") as f:
         config = yaml.safe_load(f)
     saved_files_dir = config.get("saved_files_dir")
+    os.makedirs(saved_files_dir, exist_ok=True)
     pipeline_type = config["pipeline_type"]
     window = config["window"]
     targets = config["prediction_target"]
