@@ -8,7 +8,7 @@ with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
     parquet_path = os.path.expanduser(config["parquet_path"])
     DATA_DIR = os.path.expanduser(config["data_dir"]) 
-
+    resample_frequency = config["data_frequency"]
 # 2. Create the directory on disk if it doesn't exist yet
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(parquet_path), exist_ok=True)
@@ -46,10 +46,10 @@ print(f"\n{len(df)} samples, {df['ts'].min()} .. {df['ts'].max()}")
 series = (
     df.set_index("ts")
     .groupby("metric")["value"]
-    .resample("30s")
+    .resample(f"{resample_frequency}s")
     .mean()
 )
-print("\nResampled (30s) preview:\n", series)
+print(f"\nResampled {resample_frequency}s preview:\n", series)
 print("Metrics actually found in the dataset:", df["metric"].unique())
 # 5. Save the full dataframe to a Parquet file without the row index numbers
 df.to_parquet(parquet_path, index=False)
