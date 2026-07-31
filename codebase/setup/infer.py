@@ -23,6 +23,7 @@ def inference():
 
     if pipeline_type == "gmlp":
         pipeline = gMLP_pipeline()
+        print("loading gMLP model from", os.path.join(saved_files_dir, "trained_model_gmlp.pth"))
         pipeline.model = torch.load(
             os.path.join(saved_files_dir, "trained_model_gmlp.pth"), 
             map_location="cpu", 
@@ -41,6 +42,7 @@ def inference():
         pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max_xgb.pkl"), "rb"))
     elif pipeline_type == "itransformer":
         pipeline = iTransformer_pipeline()
+        print("loading iTransformer model from", os.path.join(saved_files_dir, "trained_model_itransformer.pth"))
         pipeline.model = torch.load(
             os.path.join(saved_files_dir, "trained_model_itransformer.pth"), 
             map_location="cpu", 
