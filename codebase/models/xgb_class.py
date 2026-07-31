@@ -3,6 +3,7 @@ from sklearn.metrics import mean_squared_error
 from codebase.helpers.sliding_window import apply_sliding_window
 import numpy as np
 import xgboost as xgb
+import os
 import yaml
 from codebase.helpers.to_saved_files import atomic_save
 class XGBoost_pipeline:
@@ -16,6 +17,8 @@ class XGBoost_pipeline:
                 config = yaml.safe_load(f)
                 self.params = config.get("xgb", {}).get("model_params", {})
                 self.saved_files_dir = config.get("saved_files_dir")
+                os.makedirs(self.saved_files_dir, exist_ok=True)
+
         def preprocess_splits(
             self,
             df,

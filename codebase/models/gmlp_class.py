@@ -11,6 +11,7 @@ import numpy as np
 import torch
 import yaml
 from codebase.helpers.to_saved_files import atomic_save
+import os
 
 class gMLP_pipeline:
         def __init__(self):
@@ -23,6 +24,8 @@ class gMLP_pipeline:
                 config = yaml.safe_load(f)
                 self.params = config.get("gmlp", {}).get("model_params", {})
                 self.saved_files_dir = config.get("saved_files_dir")
+                os.makedirs(self.saved_files_dir, exist_ok=True)
+
         def preprocess_splits(
             self,
             df,
