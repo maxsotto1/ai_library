@@ -16,7 +16,7 @@ class XGBoost_pipeline:
             with open("config.yaml", "r") as f:
                 config = yaml.safe_load(f)
                 self.params = config.get("xgb", {}).get("model_params", {})
-                self.saved_files_dir = config.get("saved_files_dir")
+                self.saved_files_dir = os.path.expanduser(config.get("saved_files_dir"))
                 os.makedirs(self.saved_files_dir, exist_ok=True)
 
         def preprocess_splits(

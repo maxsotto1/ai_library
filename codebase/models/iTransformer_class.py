@@ -16,6 +16,7 @@ from tsai.learner import Learner
 from codebase.helpers.to_saved_files import atomic_save
 from codebase.models.itransformer_model import Model
 import yaml
+import os
 
 def _time_features(values):
     """Official iTransformer calendar features for minute-resolution data."""
@@ -113,7 +114,9 @@ class iTransformer_pipeline:
         self.time_column = None
         with open("config.yaml", "r") as f:
             config = yaml.safe_load(f)
-            self.saved_files_dir = config.get("saved_files_dir")
+            self.saved_files_dir = os.path.expanduser(config.get("saved_files_dir"))
+            os.makedirs(self.saved_files_dir, exist_ok=True)
+
 
     def preprocess_splits(
         self,
