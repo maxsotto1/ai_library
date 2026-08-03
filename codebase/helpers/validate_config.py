@@ -102,7 +102,3 @@ def validate_config(config_path: Path) -> Dict[str, Any]:
 			raise ValueError(f"{model_key} section must be a mapping of parameters")
 
 	return config
-
-
-__all__ = ["validate_config"]
-
