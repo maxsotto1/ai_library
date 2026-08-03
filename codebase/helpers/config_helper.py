@@ -125,7 +125,7 @@ def validate_config(config_path: Path) -> Dict[str, Any]:
 			if key in xgb_params and (not isinstance(xgb_params[key], int) or xgb_params[key] <= 0):
 				raise ValueError(f"xgb.model_params.{key} must be a positive integer")
 		for key in ("learning_rate", "subsample", "colsample_bytree", "gamma", "reg_lambda", "reg_alpha"):
-			if key in xgb_params and (not isinstance(xgb_params[key], (int, float)) or xgb_params[key] <= 0):
+			if key in xgb_params and (not isinstance(xgb_params[key], (int, float)) or xgb_params[key] < 0):
 				raise ValueError(f"xgb.model_params.{key} must be a positive number")
 		if "objective" in xgb_params and not isinstance(xgb_params["objective"], str):
 			raise ValueError("xgb.model_params.objective must be a string")
