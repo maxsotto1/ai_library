@@ -71,8 +71,10 @@ def validate_config(config_path: Path) -> Dict[str, Any]:
 		raise ValueError(f"splits must be a list or tuple of 3 values, got {splits!r}")
 	if any(not isinstance(v, (int, float)) or not 0 < v < 1 for v in splits):
 		raise ValueError(f"Each split value must be between 0 and 1, got {splits!r}")
-	if sum(splits) >= 1:
-		raise ValueError(f"Split values must sum to less than 1, got {sum(splits)}")
+	total = float(sum(splits))
+	eps = 1e-8
+	if total > 1.0 + eps:
+		raise ValueError(f"Split values sum to more than 1.0 (got {total})")
 
 	if not isinstance(config["cols_to_drop"], list):
 		raise ValueError("cols_to_drop must be a list")
