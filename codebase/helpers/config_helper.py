@@ -141,13 +141,12 @@ def validate_config(config_path: Path) -> Dict[str, Any]:
 	print(f"Configuration file {config_path} validated successfully.")
 
 
-def update_config(config_path: Path, updates: Any, value: Any | None = None) -> None:
+def update_config(config_path: Path, updates: Any) -> None:
 	"""Update one or more keys in the YAML config file and write them back.
 
 	Args:
 		config_path: Path to the YAML configuration file.
-		updates: Either a single key string plus a value, or a dict/list of key/value pairs.
-		value: The new value to set when providing a single key string.
+		updates: Either a [key, value] pair or a dict/list of pairs.
 	"""
 	p = Path(config_path)
 	if not p.exists():
@@ -156,25 +155,24 @@ def update_config(config_path: Path, updates: Any, value: Any | None = None) -> 
 	with p.open("r", encoding="utf-8") as f:
 		config = yaml.safe_load(f) or {}
 
-	if value is not None:
-		if not isinstance(updates, str):
-			raise TypeError("When value is provided, updates must be a string key")
-		config[updates] = value
-	else:
-		if isinstance(updates, dict):
-			items = updates.items()
-		elif isinstance(updates, (list, tuple)):
-			items = updates
-		else:
-			raise TypeError("updates must be a dict, list/tuple of pairs, or a single key string with value")
-
-		for item in items:
+	if isinstance(updates, (list, tuple)) and len(updates) == 2 and isinstance(updates[0], str) and not isinstance(updates[1], (list, tuple, dict)):
+		key, new_value = updates
+		config[key] = new_value
+	elif isinstance(updates, dict):
+		for key, new_value in updates.items():
+			if not isinstance(key, str):
+				raise TypeError("Config keys must be strings")
+			config[key] = new_value
+	elif isinstance(updates, (list, tuple)):
+		for item in updates:
 			if not isinstance(item, (list, tuple)) or len(item) != 2:
 				raise ValueError("Each update item must be a [key, value] pair")
 			key, new_value = item
 			if not isinstance(key, str):
 				raise TypeError("Config keys must be strings")
 			config[key] = new_value
+	else:
+		raise TypeError("updates must be a [key, value] pair, a dict, or a list/tuple of pairs")
 
 	with p.open("w", encoding="utf-8") as f:
 		yaml.safe_dump(config, f, sort_keys=False, default_flow_style=False)
