@@ -100,5 +100,5 @@ def validate_config(config_path: Path) -> Dict[str, Any]:
 	for model_key in ("gmlp", "xgb"):
 		if model_key in config and config[model_key] is not None and not isinstance(config[model_key], dict):
 			raise ValueError(f"{model_key} section must be a mapping of parameters")
-
-	return config
+	print(f"Configuration file {config_path} validated successfully.")
+	
