@@ -135,8 +135,8 @@ def validate_config(config_path: Path) -> Dict[str, Any]:
 			raise ValueError("xgb.model_params.predictor must be a string")
 		if "random_state" in xgb_params and (not isinstance(xgb_params["random_state"], int) or xgb_params["random_state"] < 0):
 			raise ValueError("xgb.model_params.random_state must be a non-negative integer")
-		if "n_jobs" in xgb_params and (not isinstance(xgb_params["n_jobs"], int) or xgb_params["n_jobs"] <= 0):
-			raise ValueError("xgb.model_params.n_jobs must be a positive integer")
+		if "n_jobs" in xgb_params and (not isinstance(xgb_params["n_jobs"], int)):
+			raise ValueError("xgb.model_params.n_jobs must be an integer")
 
 	print(f"Configuration file {config_path} validated successfully.")
 
