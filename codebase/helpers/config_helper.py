@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Dict, Any
+import re
 import yaml
 
 def validate_config(config_path: Path) -> Dict[str, Any]:
@@ -46,6 +47,7 @@ def validate_config(config_path: Path) -> Dict[str, Any]:
 		"stride",
 		"parquet_path",
 		"data_frequency",
+		"retrain_frequency",
 		"STANDARD_METRICS",
 		"data_dir",
 		"saved_files_dir",
@@ -82,6 +84,11 @@ def validate_config(config_path: Path) -> Dict[str, Any]:
 	if not isinstance(config.get("STANDARD_METRICS"), list):
 		raise ValueError("STANDARD_METRICS must be a list of metric names")
 
+	for key in ("data_frequency", "retrain_frequency"):
+		value = config.get(key)
+		if not isinstance(value, str) or not re.fullmatch(r"\d+[sm]", value):
+			raise ValueError(f"{key} must be a string like '30s' or '5m', got {value!r}")
+
 	# data_dir and saved_files_dir should be non-empty strings
 	for dir_key in ("data_dir", "saved_files_dir", "parquet_path"):
 		if not isinstance(config.get(dir_key), str) or not config.get(dir_key).strip():
@@ -100,5 +107,77 @@ def validate_config(config_path: Path) -> Dict[str, Any]:
 	for model_key in ("gmlp", "xgb"):
 		if model_key in config and config[model_key] is not None and not isinstance(config[model_key], dict):
 			raise ValueError(f"{model_key} section must be a mapping of parameters")
+
+	# Validate common hyperparameters for supported model sections
+	gmlp_params = config.get("gmlp", {}).get("model_params", {}) if isinstance(config.get("gmlp"), dict) else {}
+	xgb_params = config.get("xgb", {}).get("model_params", {}) if isinstance(config.get("xgb"), dict) else {}
+
+	if gmlp_params:
+		for key in ("d_model", "d_ffn", "depth", "patch_size", "epochs"):
+			if key in gmlp_params and (not isinstance(gmlp_params[key], int) or gmlp_params[key] <= 0):
+				raise ValueError(f"gmlp.model_params.{key} must be a positive integer")
+		for key in ("lr", "patience"):
+			if key in gmlp_params and (not isinstance(gmlp_params[key], (int, float)) or gmlp_params[key] <= 0):
+				raise ValueError(f"gmlp.model_params.{key} must be a positive number")
+
+	if xgb_params:
+		for key in ("n_estimators", "max_depth", "min_child_weight"):
+			if key in xgb_params and (not isinstance(xgb_params[key], int) or xgb_params[key] <= 0):
+				raise ValueError(f"xgb.model_params.{key} must be a positive integer")
+		for key in ("learning_rate", "subsample", "colsample_bytree", "gamma", "reg_lambda", "reg_alpha"):
+			if key in xgb_params and (not isinstance(xgb_params[key], (int, float)) or xgb_params[key] <= 0):
+				raise ValueError(f"xgb.model_params.{key} must be a positive number")
+		if "objective" in xgb_params and not isinstance(xgb_params["objective"], str):
+			raise ValueError("xgb.model_params.objective must be a string")
+		if "tree_method" in xgb_params and not isinstance(xgb_params["tree_method"], str):
+			raise ValueError("xgb.model_params.tree_method must be a string")
+		if "predictor" in xgb_params and not isinstance(xgb_params["predictor"], str):
+			raise ValueError("xgb.model_params.predictor must be a string")
+		if "random_state" in xgb_params and (not isinstance(xgb_params["random_state"], int) or xgb_params["random_state"] < 0):
+			raise ValueError("xgb.model_params.random_state must be a non-negative integer")
+		if "n_jobs" in xgb_params and (not isinstance(xgb_params["n_jobs"], int) or xgb_params["n_jobs"] <= 0):
+			raise ValueError("xgb.model_params.n_jobs must be a positive integer")
+
 	print(f"Configuration file {config_path} validated successfully.")
+
+
+def update_config(config_path: Path, updates: Any, value: Any | None = None) -> None:
+	"""Update one or more keys in the YAML config file and write them back.
+
+	Args:
+		config_path: Path to the YAML configuration file.
+		updates: Either a single key string plus a value, or a dict/list of key/value pairs.
+		value: The new value to set when providing a single key string.
+	"""
+	p = Path(config_path)
+	if not p.exists():
+		raise FileNotFoundError(f"Configuration file not found: {p}")
+
+	with p.open("r", encoding="utf-8") as f:
+		config = yaml.safe_load(f) or {}
+
+	if value is not None:
+		if not isinstance(updates, str):
+			raise TypeError("When value is provided, updates must be a string key")
+		config[updates] = value
+	else:
+		if isinstance(updates, dict):
+			items = updates.items()
+		elif isinstance(updates, (list, tuple)):
+			items = updates
+		else:
+			raise TypeError("updates must be a dict, list/tuple of pairs, or a single key string with value")
+
+		for item in items:
+			if not isinstance(item, (list, tuple)) or len(item) != 2:
+				raise ValueError("Each update item must be a [key, value] pair")
+			key, new_value = item
+			if not isinstance(key, str):
+				raise TypeError("Config keys must be strings")
+			config[key] = new_value
+
+	with p.open("w", encoding="utf-8") as f:
+		yaml.safe_dump(config, f, sort_keys=False, default_flow_style=False)
+
+
 	
