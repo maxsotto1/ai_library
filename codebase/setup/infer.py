@@ -56,6 +56,7 @@ def inference():
         pipeline.n_past = window
         pipeline.n_targets = len(target_cols)
         pipeline.time_column = "ts"
+        pipeline.conformal_q = pickle.load(open(os.path.join(saved_files_dir, "conformal_q_itransformer.pkl"), "rb"))
     else:
         raise ValueError(f"Unsupported pipeline type: {pipeline_type}")
     data_frequency = pd.to_timedelta(config.get("data_frequency"))

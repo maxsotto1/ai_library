@@ -216,16 +216,33 @@ class iTransformer_pipeline:
             )
             learn.fit_one_cycle(epochs, lr)
             preds, targets = learn.get_preds(dl=test_dl)
+            preds_val, targets_val = learn.get_preds(dl=dls.valid)
+            preds_val = self.scaler_y.inverse_transform(self._targets_2d(preds_val))
+            targets_val = self.scaler_y.inverse_transform(self._targets_2d(targets_val))
+
+        #perform conformal prediction interval calculation
+        val_residuals = np.abs(preds_val - targets_val)
+        alpha = 0.05  
+        n_val = len(val_residuals)
+
+        # 3. Finite-sample correction formula for Conformal Prediction
+        q_level = np.ceil((n_val + 1) * (1 - alpha)) / n_val
+        q_level = min(q_level, 1.0)  # Safety cap at 1.0
+
+        # 4. Compute the quantile threshold
+        # axis=0 calculates a distinct margin for each future timestep in your horizon
+        self.conformal_q = np.quantile(val_residuals, q_level, axis=0)
 
         preds = self.scaler_y.inverse_transform(self._targets_2d(preds))
         targets = self.scaler_y.inverse_transform(self._targets_2d(targets))
-        rmse_val = sqrt(mean_squared_error(preds, targets))
+        rmse = sqrt(mean_squared_error(preds, targets))
 
         self.model = model
         atomic_save(self.model, f"{self.saved_files_dir}/trained_model_itransformer.pth",use_pytorch=True)
         atomic_save(self.scaler_x, f"{self.saved_files_dir}/scaler_x_itransformer.pkl")
         atomic_save(self.scaler_y, f"{self.saved_files_dir}/scaler_y_itransformer.pkl")
-        return model, rmse_val
+        atomic_save(self.conformal_q, f"{self.saved_files_dir}/conformal_q_itransformer.pkl")
+        return model, rmse, self.conformal_q
 
     def preprocess_inference(self, df, targets, n_past, exclude_columns=None):
         if self.scaler_x is None:

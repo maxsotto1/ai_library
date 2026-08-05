@@ -90,14 +90,13 @@ class XGBoost_pipeline:
             preds = model.predict(x_test)
             preds = self.scaler_y.inverse_transform(preds)
             targets = self.scaler_y.inverse_transform((y_test))
-            rmse_val = sqrt(mean_squared_error(preds, targets))
+            rmse = sqrt(mean_squared_error(preds, targets))
             self.model = model
             atomic_save(self.model, f"{self.saved_files_dir}/trained_model_xgb.pkl")
             atomic_save(self.scaler_x, f"{self.saved_files_dir}/scaler_x_xgb.pkl")
             atomic_save(self.scaler_y, f"{self.saved_files_dir}/scaler_y_xgb.pkl")
             atomic_save(self.clipping_min, f"{self.saved_files_dir}/clipping_min_xgb.pkl")
             atomic_save(self.clipping_max, f"{self.saved_files_dir}/clipping_max_xgb.pkl")
-
 
             #conformal prediction intervals
             val_preds = model.predict(x_val).reshape(-1, 1)
@@ -116,7 +115,7 @@ class XGBoost_pipeline:
             # axis=0 calculates a distinct margin for each future timestep in your horizon
             self.conformal_q = np.quantile(val_residuals, q_level, axis=0)
             atomic_save(self.conformal_q, f"{self.saved_files_dir}/conformal_q_xgb.pkl")
-            return model, rmse_val, self.conformal_q
+            return model, rmse, self.conformal_q
     
 
         def preprocess_inference(self, df, targets, n_past, exclude_columns=None):
