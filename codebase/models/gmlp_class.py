@@ -115,14 +115,14 @@ class gMLP_pipeline:
 
             learn.fit_one_cycle(epochs, lr)
             preds, targets = learn.get_preds(dl=test_dl)
-            preds = self.scaler_y.inverse_transform(preds).reshape(-1,1)
-            targets = self.scaler_y.inverse_transform(targets).reshape(-1,1)
+            preds = self.scaler_y.inverse_transform(preds)
+            targets = self.scaler_y.inverse_transform(targets)
             rmse_test = sqrt(mean_squared_error(preds, targets))
 
             #conformal prediction intervals
             val_preds, val_targets = learn.get_preds(dl=dls.valid)
-            val_preds = self.scaler_y.inverse_transform(val_preds)
-            val_targets = self.scaler_y.inverse_transform(val_targets)
+            val_preds = self.scaler_y.inverse_transform(val_preds).reshape(-1, 1)
+            val_targets = self.scaler_y.inverse_transform(val_targets).reshape(-1, 1)
             val_residuals = np.abs(val_targets - val_preds)
             alpha = 0.05  
             n_val = len(val_residuals)
