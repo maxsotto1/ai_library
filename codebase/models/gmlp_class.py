@@ -117,7 +117,7 @@ class gMLP_pipeline:
             preds, targets = learn.get_preds(dl=test_dl)
             preds = self.scaler_y.inverse_transform(preds)
             targets = self.scaler_y.inverse_transform(targets)
-            rmse = sqrt(mean_squared_error(preds, targets))
+            rmse_test = sqrt(mean_squared_error(preds, targets))
 
             #conformal prediction intervals
             val_preds, val_targets = learn.get_preds(dl=dls.valid)
@@ -153,7 +153,7 @@ class gMLP_pipeline:
             atomic_save(self.clipping_min, f"{self.saved_files_dir}/clipping_min_gmlp.pkl")
             atomic_save(self.clipping_max, f"{self.saved_files_dir}/clipping_max_gmlp.pkl")
             atomic_save(self.conformal_q, f"{self.saved_files_dir}/conformal_q_gmlp.pkl")
-            return model, rmse, self.conformal_q
+            return model, rmse_test, self.conformal_q
         
         def preprocess_inference(self, df, targets, n_past, exclude_columns=None):
 

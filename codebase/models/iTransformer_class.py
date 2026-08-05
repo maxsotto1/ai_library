@@ -235,14 +235,14 @@ class iTransformer_pipeline:
 
         preds = self.scaler_y.inverse_transform(self._targets_2d(preds))
         targets = self.scaler_y.inverse_transform(self._targets_2d(targets))
-        rmse = sqrt(mean_squared_error(preds, targets))
+        rmse_test = sqrt(mean_squared_error(preds, targets))
 
         self.model = model
         atomic_save(self.model, f"{self.saved_files_dir}/trained_model_itransformer.pth",use_pytorch=True)
         atomic_save(self.scaler_x, f"{self.saved_files_dir}/scaler_x_itransformer.pkl")
         atomic_save(self.scaler_y, f"{self.saved_files_dir}/scaler_y_itransformer.pkl")
         atomic_save(self.conformal_q, f"{self.saved_files_dir}/conformal_q_itransformer.pkl")
-        return model, rmse, self.conformal_q
+        return model, rmse_test, self.conformal_q
 
     def preprocess_inference(self, df, targets, n_past, exclude_columns=None):
         if self.scaler_x is None:
