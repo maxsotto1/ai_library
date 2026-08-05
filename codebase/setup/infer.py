@@ -10,7 +10,6 @@ from codebase.models.xgb_class import XGBoost_pipeline
 from codebase.helpers.pivot_df import pivot_df 
 import codebase.setup.read
 
-saved_files_dir = "codebase/saved_files"
 def inference():
     with open("config.yaml", "r") as f:
         config = yaml.safe_load(f)
