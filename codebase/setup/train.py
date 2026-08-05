@@ -48,7 +48,7 @@ def get_last_window_data_and_train(train_window, train_horizon, targets, pipelin
         model, rmse, conformal_q = pipeline.train(train_ds, val_ds, test_ds)
     elif pipeline_type == "itransformer":
         dls, test_dls = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
-        model, rmse = pipeline.train(dls, test_dls)
+        model, rmse, conformal_q = pipeline.train(dls, test_dls)
     print(f"Trained {pipeline_type} model with RMSE: {rmse}")
 
 get_last_window_data_and_train(train_window, train_horizon, targets, pipeline_type, splits, cols_to_drop)
