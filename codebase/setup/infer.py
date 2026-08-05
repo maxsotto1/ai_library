@@ -32,6 +32,7 @@ def inference():
         pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y_gmlp.pkl"), "rb"))
         pipeline.clipping_min = pickle.load(open(os.path.join(saved_files_dir, "clipping_min_gmlp.pkl"), "rb"))
         pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max_gmlp.pkl"), "rb"))
+        pipeline.conformal_q = pickle.load(open(os.path.join(saved_files_dir, "conformal_q_gmlp.pkl"), "rb"))
     elif pipeline_type == "xgb":
         pipeline = XGBoost_pipeline()
         print("loading xgboost model from", os.path.join(saved_files_dir, "trained_model_xgb.pkl"))
@@ -40,6 +41,7 @@ def inference():
         pipeline.scaler_y = pickle.load(open(os.path.join(saved_files_dir, "scaler_y_xgb.pkl"), "rb"))
         pipeline.clipping_min = pickle.load(open(os.path.join(saved_files_dir, "clipping_min_xgb.pkl"), "rb"))
         pipeline.clipping_max = pickle.load(open(os.path.join(saved_files_dir, "clipping_max_xgb.pkl"), "rb"))
+        pipeline.conformal_q = pickle.load(open(os.path.join(saved_files_dir, "conformal_q_xgb.pkl"), "rb"))
     elif pipeline_type == "itransformer":
         pipeline = iTransformer_pipeline()
         print("loading iTransformer model from", os.path.join(saved_files_dir, "trained_model_itransformer.pth"))
@@ -89,4 +91,4 @@ def inference():
     print(f"First predicted timestamp: {first_predicted}")
     print(f"Last predicted timestamp: {last_predicted}")
     print(f"Data frequency: {data_frequency}")
-    return predictions, first_predicted, last_predicted, data_frequency
+    return predictions, first_predicted, last_predicted, data_frequency, pipeline.conformal_q

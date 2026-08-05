@@ -146,7 +146,7 @@ def update_config(config_path: Path, updates: Any) -> None:
 
 	Args:
 		config_path: Path to the YAML configuration file.
-		updates: Either a [key, value] pair or a dict/list of pairs.
+		updates: Either a [key, value] pair or a list of pairs.
 	"""
 	p = Path(config_path)
 	if not p.exists():

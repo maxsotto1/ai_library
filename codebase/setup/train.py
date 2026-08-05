@@ -42,10 +42,10 @@ def get_last_window_data_and_train(train_window, train_horizon, targets, pipelin
     df = df.set_index("ts").resample(resample_frequency).mean().interpolate("linear").bfill().ffill().reset_index()
     if pipeline_type == "gmlp":
         dls, test_dl = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
-        model, rmse = pipeline.train(dls, test_dl)
+        model, rmse, conformal_q = pipeline.train(dls, test_dl)
     elif pipeline_type == "xgb":
         train_ds, val_ds, test_ds = pipeline.preprocess_splits(df,targets, splits, train_horizon, train_window, stride, cols_to_drop)
-        model, rmse = pipeline.train(train_ds, val_ds, test_ds)
+        model, rmse, conformal_q = pipeline.train(train_ds, val_ds, test_ds)
     elif pipeline_type == "itransformer":
         dls, test_dls = pipeline.preprocess_splits(df, targets, splits, train_horizon, train_window, stride, cols_to_drop)
         model, rmse = pipeline.train(dls, test_dls)
