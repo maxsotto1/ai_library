@@ -1,0 +1,5 @@
+include README.md
+include LICENSE
+include ai_library/config.yaml
+include ai_library/requirements.txt
+recursive-include ai_library/codebase *.py *.yaml *.yml
